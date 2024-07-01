@@ -1,0 +1,104 @@
+use("ger_store")
+
+db.iot.drop()
+
+db.iot.insertMany([
+  { _id: 1, sensor: "A001", date: "2022-01-01", readings: [[1,2,3,4]] },
+  { _id: 2, sensor: "A001", date: "2022-01-02", readings: [[1,2,3,4]] },
+  { _id: 3, sensor: "A002", date: "2022-01-01", readings: [[1,2,3,4]] },
+  { _id: 4, sensor: "A002", date: "2022-01-02", readings: [[1,2,3,4]] },
+])
+
+// ----------------------------------------------------------------
+use("ger_store")
+db.iot.find()
+// ----------------------------------------------------------------
+
+// cuándo hacer un update o insert dependiendo del caso
+// por fecha debería haber solo un documento
+use("ger_store")
+db.iot.insertOne(
+  {
+    sensor: "A001",
+    date: "2022-01-03",
+    readings:[[1,2,1,2]]
+  }
+)
+// agregamos nueva lectura al sensor
+use("ger_store")
+db.iot.updateOne(
+  {
+    sensor: "A001",
+    date: "2022-01-03",
+  },
+  {
+    $push: {readings:[2,3,1,2]} // no quiero insertar un SUBarray
+  }
+)
+
+// agregamos nueva lectura al sensor
+use("ger_store")
+db.iot.updateOne(
+  {
+    sensor: "A001",
+    date: "2022-01-03",
+  },
+  {
+    $pop: {
+      readings:1 // 1 borra el último elemento
+    }
+  }
+)
+
+// agregamos nueva lectura al sensor
+use("ger_store")
+db.iot.updateOne(
+  {
+    sensor: "A001",
+    date: "2022-01-03",
+  },
+  {
+    $push: {
+      readings: [3, 3, 1, 3]
+    }
+  }
+)
+
+// ----------------------------------------------------------------
+// cuándo hacer un update o insert dependiendo del caso, inserte
+// para el primer valor del día y updates para los siguientes
+use("ger_store")
+db.iot.updateOne(
+  {
+    sensor: "A001",
+    date: "2022-01-04",
+  },
+  {
+    $push: {
+      readings: [3, 3, 1, 3] // primer lectura
+    }
+  },
+  {
+    upsert: true // si no existe crea el registro, de lo contrario solo agrega
+  }
+)
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+use("ger_store")
+db.iot.find()
+// ----------------------------------------------------------------
+use("ger_store")
+db.iot.updateOne(
+  {
+    sensor: "A001",
+    date: "2022-01-04",
+  },
+  {
+    $push: {
+      readings: [5, 5, 1, 3] // Segunda lectura del día
+    }
+  },
+  {
+    upsert: true // si no existe crea el registro, de lo contrario solo agrega
+  }
+)

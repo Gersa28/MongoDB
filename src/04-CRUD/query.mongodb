@@ -1,0 +1,2 @@
+use("ger_store") //Si no existe la BD la crea
+db.products.find()

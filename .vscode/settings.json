@@ -1,0 +1,8 @@
+{
+    "CodeGPT.apiKey": "CodeGPT Plus Beta",
+    "github.copilot.advanced": {
+
+    },
+    "github.copilot.renameSuggestions.triggerAutomatically": false,
+    "github.copilot.editor.enableAutoCompletions": false
+}

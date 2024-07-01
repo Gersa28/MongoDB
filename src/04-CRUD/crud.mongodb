@@ -1,0 +1,202 @@
+use("ger_store") //Si no existe la BD la crea
+db.products.find()
+
+// Si no existe la colección se creará automáticamente
+db.products.insertOne
+  (
+      {
+          name: "Producto 1",
+          price: 1000,
+          stock: 10
+      }
+  )
+
+db.products.insertOne
+  (
+      {
+          name: "Producto 2",
+          price: 1200,
+          stock: 10
+      }
+  )
+
+
+db.products.find()
+
+
+db.products.drop() // Vaciamos la colección, borrará todos los documentos
+// Insertar VARIOS documentos
+// Si hay errores de todas maneras insertará los que no tengan inconvenientes, previos
+// Luego del error la inserción se detiene
+
+db.products.insertMany
+  (
+    [
+      {
+          name: "Producto 1",
+          price: 1000,
+          stock: 10
+      },
+      {
+          name: "Producto 2",
+          price: 1200,
+          stock: 10
+      },
+      {
+          name: "Producto 3",
+          price: 1500,
+          stock: 10
+      },
+      {
+          name: "Producto 4",
+          price: 2000,
+          stock: 10
+      }
+    ]
+  )
+
+db.products.find()
+
+// utilizaremos ordered false para que inserte los que no tienen errores
+// despues de sucedido un inconveniente+
+use("ger_store")
+db.products.drop()
+db.products.insertMany
+  (
+    [
+      {
+          name: "Producto 1",
+          price: 1000,
+          stock: 10
+      },
+      {
+          name: "Producto 2",
+          price: 1200,
+          stock: 10
+      },
+      {
+          name: "Producto 3",
+          price: 1500,
+          stock: 10
+      },
+      {
+          name: "Producto 4",
+          price: 2000,
+          stock: 10
+      },
+      {
+        _id: 5,
+        name: "Producto 5",
+        price: 2800,
+        stock: 156
+      },
+      {
+        _id: 5,
+        name: "Producto 5",
+        price: 5500,
+        stock: 10
+      },
+      {
+        _id: 6,
+        name: "Producto 6", // Se Inserta después del Error de duplicidad
+        price: 6600,
+        stock: 10
+      },
+    ],
+    {ordered: false}
+  )
+
+use("ger_store")
+db.products.find()
+
+// ACTUALIZAR DOCUMENTOS
+use("ger_store")
+db.products.updateOne(
+  {_id: 6},
+  {
+    $set: {
+          name: 'NOMBRE ACTUALIZADO',
+          price: 4628,
+          tags: ['A','B','C','D','E','F']
+          }
+  }
+)
+
+use("ger_store")
+db.products.updateOne(
+  {_id: 6},
+  {
+    $inc: {
+          price: 1000, //Incrementa el precio en 1K
+          }
+  }
+)
+
+use("ger_store")
+db.products.updateOne(
+  {_id: ObjectId("667dc75e3d3518cc4cf76616")},
+  {
+    $inc: {
+          price: 1000, //Incrementa el precio en 1K
+          }
+  }
+)
+
+use("ger_store")
+db.products.find()
+
+
+// Actualizar múltiples documentos según condición
+use("sample_training")
+db.zips.find({"city": "CLEVELAND"})
+
+use("sample_training")
+db.zips.updateMany
+(
+  // Condition Query
+  {"city": "CLEVELAND"},
+  // Updates
+  {
+    $inc:{pop: 1000}
+  }
+)
+
+use("sample_training")
+db.zips.updateMany
+(
+  // Condition Query
+  {"city": "CLEVELAND"},
+  // Updates
+  {
+    $set:{Mi_Atributo: "Hola"}
+  }
+)
+
+
+// RENOMBRAR
+use("sample_training")
+db.zips.updateMany
+(
+  // Condition Query
+  {"city": "CLEVELAND"},
+  // Updates
+  {
+    $rename:{Mi_Atributo: "mi_atributo"}
+  }
+)
+
+use("sample_training")
+db.zips.find({"city": "CLEVELAND"})
+
+
+// Eliminar un ATRIBUTO
+use("sample_training")
+db.zips.updateMany
+(
+  // Condition Query
+  {"city": "CLEVELAND"},
+  // Updates
+  {
+    $unset:{mi_atributo:""}
+  }
+)
