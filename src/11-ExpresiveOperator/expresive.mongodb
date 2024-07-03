@@ -1,0 +1,58 @@
+use("ger_store")
+
+db.monthlyBudget.drop()
+
+db.monthlyBudget.insertMany([
+  { "_id" : 1, "category" : "food",    "budget": 400, "spent": 450 },
+  { "_id" : 2, "category" : "drinks",  "budget": 100, "spent": 150 },
+  { "_id" : 3, "category" : "clothes", "budget": 100, "spent": 50  },
+  { "_id" : 4, "category" : "misc",    "budget": 500, "spent": 300 },
+  { "_id" : 5, "category" : "travel",  "budget": 200, "spent": 650 }
+])
+
+
+use("ger_store")
+db.monthlyBudget.find()
+
+use("ger_store")
+db.monthlyBudget.find(
+    {
+        spent: {$gte: 100}
+    }
+)
+
+use("ger_store")
+db.monthlyBudget.find(
+    {
+    $expr: { $gte: ["$spent", 100] }
+    }
+)
+
+use("ger_store")
+db.monthlyBudget.find(
+    {
+    $expr: { $gte: ["$spent", "$budget"] } // comparo el valor de dos campos spent >= budget
+    }
+)
+
+use("sample_training")
+db.trips.find(
+    {
+        $expr:{
+            $eq: ["$start station id","$end station id"]
+        }
+    }
+)
+
+use("sample_training")
+db.trips.find(
+    {
+        $expr:{
+            $and:[ 
+                {$eq: ["$start station id","$end station id"]},
+                {$gte: ["$tripduration",1200]}
+                //{tripduration: {$gte: 1200}} //Da error
+            ]        
+        }
+    }
+)

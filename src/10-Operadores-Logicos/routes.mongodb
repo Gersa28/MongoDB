@@ -1,0 +1,45 @@
+use("sample_training")
+db.routes.find()
+
+use("sample_training")
+db.routes.find(
+    {airplane: "E70"}
+)
+
+use("sample_training")
+db.routes.find({
+    $or:[
+        {dst_airport: "BOG"},
+        {stc_airport: "BOG"},
+    ]
+}).count()
+
+
+// And implícito OR explícito
+// El Vuelo E70 ha aterrizado o despegado de BOGOTÁ
+use("sample_training")
+db.routes.find({ 
+    airplane: "E70",
+    $or: [
+        { dst_airport: "BOG" },
+        { src_airport: "BOG" }
+    ]
+})
+
+
+// También podemos añadir proyecciones
+use("sample_training")
+db.routes.find(
+    {
+    airplane: "E70",
+    $or: [
+      { dst_airport: "BOG"},
+      { src_airport: "BOG"}
+    ]
+    },
+    {
+    airplane: 1,
+    dst_airport: 1,
+    src_airport: 1
+    }
+)

@@ -1,0 +1,40 @@
+use("sample_airbnb")
+db.listingsAndReviews.find()
+
+use("sample_airbnb")
+db.listingsAndReviews.find(
+    {
+        amenities: "Wifi" // Lugares con Wifi
+    },
+    {
+        price: 1,
+        amenities: 1
+    }
+)
+
+// Usando Aggregations, cada pipeline alimenta al anterior
+use("sample_airbnb")
+db.listingsAndReviews.aggregate(
+    [
+        {$match: { amenities: "Wifi" }}, // find
+        {$project: {price: 1, amenities: 1 }}, // project
+    ]
+)
+
+// al funcionar por capas puedo empezar a hacer agrupaciones
+// Usando Aggregations, cada pipeline alimenta al anterior
+use("sample_airbnb")
+db.listingsAndReviews.aggregate(
+    [
+        {$match: { amenities: "Wifi" }}, // find
+        {$project: {address: 1 }}, // project
+        {$group: {_id: "$address.country" }}
+    ]
+)
+
+use("sample_airbnb")
+db.listingsAndReviews.aggregate([
+    { $match: { amenities: "Wifi" } }, // find
+    { $project: { address: 1 } }, // project
+    { $group: { _id: "$address.country", count: { $sum: 1 } } } // group
+])

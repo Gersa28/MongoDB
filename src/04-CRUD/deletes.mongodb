@@ -15,3 +15,29 @@ db.products.insertMany([
 ])
 
 db.products.find()
+
+
+// --delete One -----------------------------------
+use("ger_store")
+// Eliminar documento por Id (personalizado)
+db.products.deleteOne({ _id: 1 })
+
+db.products.find()
+
+// eliminar todos los que coincidan con la consulta
+use("ger_store")
+db.products.deleteMany(
+  {
+    price: 100 // condición
+  }
+)
+
+// eliminar todos los documentos de la colección
+use("ger_store")
+db.products.drop()
+
+
+// ----------------------------------------------------------------
+use("ger_store")
+db.products.find()
+// ----------------------------------------------------------------

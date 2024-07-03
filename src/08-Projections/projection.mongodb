@@ -1,0 +1,10 @@
+use("sample_training")
+db.trips.find(
+  // query
+  {tripduration: {$gte: 500} },
+  // projections
+  {tripduration: 1, usertype: 1}
+)
+
+//Aqui aplicamos projection de forma explicita
+db.trips.find({tripduration:{$lte:500},usertype:"Subscriber"}).projection({"tripduration":1,"end station name":1})

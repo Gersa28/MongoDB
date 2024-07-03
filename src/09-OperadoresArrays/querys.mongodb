@@ -1,0 +1,105 @@
+use ("ger_store")
+db.inventory.drop()
+
+db.inventory.insertMany([
+  { _id: 1, item: { name: "ab", code: "123", description : "Single line description."    }, qty: 15, tags: [ "school", "book", "bag", "headphone", "appliance" ] },
+  { _id: 2, item: { name: "cd", code: "123", description : "First line\nSecond line"     }, qty: 20, tags: [ "appliance", "school", "book" ] },
+  { _id: 3, item: { name: "ij", code: "456", description : "Many spaces before     line" }, qty: 25, tags: [ "school", "book" ] },
+  { _id: 4, item: { name: "xy", code: "456", description : "Multiple\nline description"  }, qty: 30, tags: [ "electronics", "school" ] },
+  { _id: 5, item: { name: "mn", code: "000" }, qty: 20, tags: [ "appliance", "school" ] },
+])
+
+// ----------------------------------------------------------------
+use ("ger_store")
+db.inventory.find()
+// ----------------------------------------------------------------
+
+// ----------------------------------------------------------------
+use ("ger_store")
+db.survey.drop();
+
+db.survey.insertMany([
+  {
+    _id: 1,
+    results: [
+      { product: "abc", score: 10 },
+      { product: "xyz", score: 5 },
+    ],
+  },
+  {
+    _id: 2,
+    results: [
+      { product: "abc", score: 8 },
+      { product: "xyz", score: 7 },
+    ],
+  },
+  {
+    _id: 3,
+    results: [
+      { product: "abc", score: 7 },
+      { product: "xyz", score: 8 },
+    ],
+  },
+  {
+    _id: 4,
+    results: [
+      { product: "abc", score: 7 },
+      { product: "def", score: 8 },
+    ],
+  },
+]);
+
+// ----------------------------------------------------------------
+use ("ger_store")
+db.survey.find();
+// ----------------------------------------------------------------
+
+//operador $in (ya visto en update-arrays), para obetener elementos dentro de un array, objetos o valores especificos
+use ("ger_store")
+db.inventory.find({ qty: { $in: [20,25]} })
+
+use ("ger_store")
+db.inventory.find({
+    tags: { $in: ["book", "electronics"]}
+     //$in funcionaria como "or"
+})
+
+// $nin para establecer que no traiga elementos que coincidan con la query usando este operador
+use ("ger_store")
+db.inventory.find({ qty: { $nin: [20,25]} })
+
+use ("ger_store")
+db.inventory.find({
+    tags: { $nin: ["book", "electronics"]}
+    //$in funcionaria como "or"
+})
+
+// ----------------------------------------------------------------
+// operadores que solo funcionan para arrays
+// ----------------------------------------------------------------
+use ("ger_store")
+db.inventory.find({ tags: "book"})
+
+//esta query debe cumplir el orden del documentos para que nos traiga exactamente lo que pedimos en la query
+use ("ger_store")
+db.inventory.find({ tags: ["school", "book"]})
+
+// operador $all, no importa el orden
+use ("ger_store")
+db.inventory.find({ tags: {$all: ["book", "school"]}})
+
+// operador $size, para buscar sobre el tamano de los arrays que tengan esa cantidad de elementos
+use ("ger_store")
+db.inventory.find({ tags: {$size: 2}})
+
+// operador $elemMatch sirve para cuando tenemos un array con objetos dentro y queremos ser exactos en la query
+use ("ger_store")
+db.survey.find({ results: {$elemMatch: {product: "xyz"}}})
+
+use ("ger_store")
+db.survey.find({
+    results: {$elemMatch: {
+        product: "xyz",
+        score: { $gte:7}
+    }}
+})

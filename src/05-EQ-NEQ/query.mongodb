@@ -1,0 +1,41 @@
+use("ger_store")
+
+db.inventory.drop()
+
+db.inventory.insertMany([
+  { _id: 1, item: { name: "ab", code: "123" }, qty: 15, tags: ["A", "B", "C"] },
+  { _id: 2, item: { name: "cd", code: "123" }, qty: 20, tags: ["B"] },
+  { _id: 3, item: { name: "ij", code: "456" }, qty: 25, tags: ["A", "B"] },
+  { _id: 4, item: { name: "xy", code: "456" }, qty: 30, tags: ["B", "A"] },
+  { _id: 5, item: { name: "mn", code: "000" }, qty: 20, tags: [["A", "B"], "C"] },
+])
+
+// ----------------------------------------------------------------
+use("ger_store")
+db.inventory.find()
+// ----------------------------------------------------------------
+
+// usando equal implicitamente
+use("ger_store")
+db.inventory.find({qty: 20})
+
+// usando equal explicitamente
+use("ger_store")
+db.inventory.find({qty: {$eq: 20}})
+
+// usando find en objetos anindados
+//NOTA: siempre que esté la notación . (punto), la clave debe ir en "" (comillas)
+use("ger_store")
+db.inventory.find({"item.code": "123"})
+
+// usando no equal, este se usa de forma explícita
+use("ger_store")
+db.inventory.find({qty: {$ne: 20}})
+
+// usando no equalen updates
+use("ger_store")
+db.inventory.updateMany(
+  {qty: {$ne: 20}}, // condición
+  {$inc:{qty: 10}}  // query
+)
+

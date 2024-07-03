@@ -1,0 +1,186 @@
+use("ger_store")
+
+db.inventory.drop()
+
+db.inventory.insertMany([
+  { _id: 1, item: { name: "ab", code: "123" }, qty: 15, tags: ["A", "B", "C"] },
+  { _id: 2, item: { name: "cd", code: "123" }, qty: 20, tags: ["B"] },
+  { _id: 3, item: { name: "ij", code: "456" }, qty: 25, tags: ["A", "B"] },
+  { _id: 4, item: { name: "xy", code: "456" }, qty: 30, tags: ["B", "A"] },
+  { _id: 5, item: { name: "mn", code: "000" }, qty: 20, tags: [["A", "B"], "C"] },
+])
+
+// ----------------------------------------------------------------
+use("ger_store")
+db.inventory.find()
+// ----------------------------------------------------------------
+
+//usging $gt (>) & $gte (>=)
+use("ger_store")
+db.inventory.find({
+  qty: {$gt: 20}
+})
+
+use("ger_store")
+db.inventory.find({
+  qty: {$gte: 20}
+})
+
+use("ger_store")
+db.inventory.find({
+  qty: {$lt: 20}
+})
+
+use("ger_store")
+db.inventory.find({
+  qty: {$lte: 20}
+})
+
+// Joins
+use("ger_store")
+db.inventory.find({
+  qty: {$gte: 25, $lte: 35}
+})
+
+// Joins
+use("ger_store")
+db.inventory.find({
+  "item.code":"123",
+  qty: {$gte: 25, $lte: 35}
+})
+
+// Joins
+use("ger_store")
+db.inventory.find({
+  "item.code":{ $ne: "123" },
+  qty: {$gte: 25, $lte: 35}
+})
+
+// ----------------------------------------------------------------
+use("ger_store")
+db.iot.drop()
+db.iot.insertMany([
+  { _id: 1, sensor: "A001", date: "2022-01-01", readings: [[1,2,3,4]] },
+  { _id: 2, sensor: "A001", date: "2022-01-02", readings: [[1,2,3,4]] },
+  { _id: 3, sensor: "A002", date: "2022-01-01", readings: [[1,2,3,4]] },
+  { _id: 4, sensor: "A002", date: "2022-01-02", readings: [[1,2,3,4]] },
+])
+
+// ----------------------------------------------------------------
+use("ger_store")
+db.iot.find()
+// ----------------------------------------------------------------
+
+use("ger_store")
+db.iot.updateMany(  //query
+  { sensor: "A001"},
+  //update
+  {
+    $pull: { readings: {$gte : 3}  } // borra los elementos de 3 y mayores
+  }
+)
+
+// ----------------------------------------------------------------
+use("sample_training")
+db.trips.find()
+// ----------------------------------------------------------------
+
+// Cambia el tipo de usuario a 'Costumer' de todas los documentos que tripduration mayores a 2000
+use("sample_training")
+db.trips.updateMany(
+    // query
+    {tripduration: {$gt: 2000}},
+    // update with operations
+    {$set: {usertype: "Costumer"}}
+)
+// Muestra todos los documentos con tripduration mayor a 2000
+use("sample_training")
+db.trips.find({
+    tripduration: {$gt: 2000}
+})
+
+// Cambia el tipo de usuario a 'Subscriber' de todas los documentos que tripduration mayores o iguales a 2600
+use("sample_training")
+db.trips.updateMany(
+    // query
+    {tripduration: {$gte: 2600}},
+    // update with operations
+    {$set: {usertype: "Subscriber"}}
+)
+// Muestra todos los documentos con tripduration mayor o igual a 2600
+use("sample_training")
+db.trips.find({
+    tripduration: {$gte: 2600}
+})
+
+// Resta 10 a todas las coordenadas de inicio de los documentos con tripduration menor a 3000 y usertype igual a "Costumer"
+use("sample_training")
+db.trips.updateMany(
+    // query
+    {$and: [{tripduration: {$lt: 3000}}, {usertype: "Costumer"}]},
+    // update with operations
+    {$inc: {
+        "start station location.coordinates.0": -10,
+        "start station location.coordinates.1": -10
+    }}
+)
+// Muestra todos los documentos con tripduration menor a 3000
+use("sample_training")
+db.trips.find(
+    {$and: [{tripduration: {$lt: 3000}}, {usertype: "Costumer"}]}
+)
+
+// Elimina el campo 'start station location' con tripduration menores a 3000 y con usertype igual a 'Costumer' (solo porque puedo :v)
+use("sample_training")
+db.trips.updateMany(
+    // query
+    {$and: [{tripduration: {$lt: 3000}}, {usertype: "Costumer"}]},
+    // update with operations
+    {$unset: {
+        "start station location": 1
+    }}
+)
+
+use("sample_training")
+db.trips.find(
+    {$and: [{tripduration: {$lt: 3000}}, {usertype: "Costumer"}]}
+)
+
+// Agrega el campo 'start station location' con tripduration menores a 3000 y con usertype igual a 'Costumer' (ya me arrepentí :'v)
+use("sample_training")
+db.trips.updateMany(
+    // query
+    {$and: [{tripduration: {$lt: 3000}}, {usertype: "Costumer"}]},
+    // update with operations
+    {$set: {
+        "start station location": {
+            type: "Point",
+            coordinates: [
+              -73.98990025,
+              40.71427487
+            ]
+          }
+    }}
+)
+
+use("sample_training")
+db.trips.find(
+    {$and: [{tripduration: {$lt: 3000}}, {usertype: "Costumer"}]}
+)
+
+// Suma 10 a todas las coordenadas de fin de los documentos con tripduration menor o igual a 2000 y usertype igual a "Subscriber"
+use("sample_training")
+db.trips.updateMany(
+    // query
+    {$and: [{tripduration: {$lte: 2000}}, {usertype: "Subscriber"}]},
+    // update with operations
+    {$inc: {
+        "start station location.coordinates.0": 10,
+        "start station location.coordinates.1": 10
+    }}
+)
+// Muestra todos los documentos con tripduration menor o igual a 2000
+use("sample_training")
+db.trips.find(
+    {$and: [{tripduration: {$lte: 2000}}, {usertype: "Subscriber"}]}
+)

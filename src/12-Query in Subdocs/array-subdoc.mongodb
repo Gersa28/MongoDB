@@ -1,0 +1,45 @@
+use("sample_training")
+db.trips.findOne(
+    {
+        "start station location.type": "Point"
+    }
+)
+
+
+use("sample_training")
+db.companies.find()
+
+use("sample_training")
+db.companies.find(
+    {
+        "relationships.0.person.last_name":"Zuckerberg" //primera posición del array
+    },
+    {
+        name:1,
+        relationships:1
+    }
+)
+
+use("sample_training")
+db.companies.find(
+    {
+        "relationships.0.person.first_name":"Mark" //primera posición del array (.0.)
+    },
+    {
+        name:1,
+        relationships:1
+    }
+)
+
+use("sample_training")
+db.companies.find(
+    {
+        relationships:{
+            $elemMatch:{"person.first_name":"Mark"}
+        }
+    },
+    {
+        name:1,
+        relationships:1
+    }
+)
