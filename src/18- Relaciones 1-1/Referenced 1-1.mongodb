@@ -1,0 +1,46 @@
+use("ger_stores")
+db.users.drop()
+
+use("ger_stores")
+db.stores.find()
+
+use("ger_stores")
+db.stores_details.find()
+
+use("ger_stores");
+try {
+  db.stores.insertOne({ // insertar un documento
+      storedId: 'ST001',
+      name: 'Tienda número UNO',
+      address: "Calle falsa 123",
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_stores");
+try {
+  db.stores_details.insertOne({ // colección de detalles
+      storedId: 'ST001',
+      description: 'descripción particular del objetivo de la empresa',
+      manager: {
+        email: 'manager.email@gmail.com',
+        celular: 3435566543
+      }
+  });
+} catch (e) {
+  printjson(e);
+}
+
+// consultando el enlazamiento
+use("ger_stores");
+db.stores.aggregate([
+  {
+    $lookup: {
+      from: 'stores_details',
+      localField: 'storedId',
+      foreignField: 'storedId',
+      as: 'results'
+    }
+  }
+])

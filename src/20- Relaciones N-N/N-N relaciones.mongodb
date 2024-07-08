@@ -1,0 +1,87 @@
+// ----------------------------------------------------------------
+use("ger_store");
+db.products.drop();
+
+use("ger_store");
+db.products.find();
+
+use("ger_store");
+try {
+  db.products.insertMany([
+    {
+      name: 'Producto 1',
+      precio: 120,
+      cantidad: 10,
+      sizes: ['L', 'M', 'S']
+    },
+    {
+      name: 'Producto 2',
+      precio: 50,
+      cantidad: 7,
+      sizes: ['L', 'S']
+    },
+    {
+      name: 'Producto 3',
+      precio: 240,
+      cantidad: 8,
+      sizes: ['L']
+    }
+  ]);
+} catch (e) {
+  printjson(e);
+}
+// ----------------------------------------------------------------
+
+
+// ----------------------------------------------------------------
+use("ger_store");
+db.stores.drop();
+
+use("ger_store");
+db.stores.find();
+
+use("ger_store");
+try {
+  db.stores.insertMany([
+    {
+      name: 'Store 1',
+      products_ids: [
+                      ObjectId('668b1fdd673270be944d8f7b'),
+                      ObjectId('668b1fdd673270be944d8f7d'),
+                      ObjectId('668b1fdd673270be944d8f7c')
+                    ]
+    },
+    {
+      name: 'Store 2',
+      products_ids: [
+                      ObjectId('668b1fdd673270be944d8f7b'),
+                      ObjectId('668b1fdd673270be944d8f7d')
+                    ]
+    },
+    {
+      name: 'Store 3',
+      products_ids: [
+                      ObjectId('668b1fdd673270be944d8f7c'),
+                      ObjectId('668b1fdd673270be944d8f7d')
+                    ]
+    }
+  ]);
+} catch (e) {
+  printjson(e);
+}
+// ----------------------------------------------------------------
+
+// ----------------------------------------------------------------
+use("ger_store");
+db.stores.aggregate([
+  {
+    $lookup:{
+      from:'products',
+      localField:'products_ids',
+      foreignField:'_id',
+      as: 'Resultados de Productos'
+    }
+  }
+])
+// ----------------------------------------------------------------
+

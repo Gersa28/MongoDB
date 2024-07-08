@@ -1,0 +1,55 @@
+use("ger_store")
+db.users.drop()
+
+use("ger_store")
+db.users.find()
+
+use("ger_store");
+try {
+  db.users.insertOne({ // insertar un documento
+      email: 'admin@gmail.com',
+      password: 'qS4564FGDFG@KDJss',
+      role: 'admin',
+      name: "pam", // propiedad del documento
+      address: { // subdocumento (Embebido)
+          street: "Calle falsa 123", // propiedad del subdocumento
+          city: "Sprinfield",
+          zip: '1234'
+      },
+      shipping_address: { // subdocumento (Embebido)
+          street: "Calle falsa 124",
+          city: "Sprinfield",
+          zip: "1235"
+      }
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_store");
+try {
+  db.users.insertOne({ // insertar un documento
+      email: 'zule@gmail.com',
+      password: 'qS4564FGDFG@KDJss',
+      role: 'customer',
+      name: "zulemita", // propiedad del documento
+      address: { // subdocumento (Embebido)
+          street: "Calle falsa 123", // propiedad del subdocumento
+          city: "Medina",
+          zip: '7734'
+      },
+      shipping_address: { // subdocumento (Embebido)
+          street: "Calle falsa 44",
+          city: "Sprinfield",
+          zip: "19845"
+      }
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_store")
+db.users.find({
+  "address.city": "Sprinfield" // Consulta a subdocumento
+  // Puedo hacer la consulta de forma Directa
+})

@@ -1,0 +1,84 @@
+// ----------------------------------
+use("ger_store")
+db.products.drop() // borro la colección si está creada
+
+// ----------------------------------
+use("ger_store")
+db.products.find() 
+
+// definimos un esquema
+use("ger_store")
+db.createCollection('products', {
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            required: ['name'], // campos obligatorios para el insert
+            properties: {
+                name:   {bsonType: 'string'},
+                sizes:  {bsonType: 'array', minItems: 1, uniqueItems:true ,items: { bsonType: 'string'} }
+            }
+        }
+    }
+})
+
+// ----------------------------------
+use("ger_store")
+db.products.insertOne({
+    name: 'Camiseta',
+    sizes: ['L','M',12] // 12 no es un string
+})
+
+// ----------------------------------
+use("ger_store")
+db.products.insertOne({
+    name: 'Camiseta',
+    sizes: ['L','M', 'L'] // doble L
+})
+
+// ----------------------------------
+
+
+// ----------------------------------
+use("ger_store")
+db.products.find() 
+// ----------------------------------
+
+// SUBDOCUMENTOS
+
+// ----------------------------------
+use("ger_store")
+db.products.drop() // borro la colección si está creada
+
+use("ger_store")
+db.products.find() 
+
+// definimos un esquema
+use("ger_store")
+db.createCollection('products', {
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            required: ['name'], // campos obligatorios para el insert
+            properties: {
+                name:   {bsonType: 'string'},
+                sizes:  {bsonType: 'array', minItems: 1, uniqueItems:true ,items: { bsonType: 'string'} },
+                // SUBDOCUMENTO
+                category: {bsonType: 'object', properties:{ 
+                                                            name:{bsonType: 'string'},
+                                                            image:{bsonType: 'string'}
+                                                          }
+                          
+                          }
+            }
+        }
+    }
+})
+
+// ----------------------------------
+use("ger_store")
+db.products.insertOne({
+    name: 'Camiseta',
+    sizes: ['L','M', 'XL'],
+    category: {name:'name category', image:'url de la imagen'} // SUBDOCUMENTO
+})
+// ----------------------------------

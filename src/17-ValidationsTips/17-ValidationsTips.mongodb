@@ -1,0 +1,160 @@
+use("ger_store")
+db.users.drop();
+
+use("ger_store")
+db.createCollection("users",
+  {
+    validator: {
+      $jsonSchema: {
+        bsonType: "object",
+        required: ["email", "password", "role"],
+        properties: {
+          name: {
+            bsonType: "string",
+          },
+          last_name: {
+            bsonType: "string",
+          },
+          email: {
+            bsonType: "string",
+          },
+          password: {
+            bsonType: "string",
+            pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})', // al menos una minúscula, una mayúscula, un número y 8 caracteres
+          },
+          age: {
+            bsonType: "number",
+            minimum: 18,
+            maximum: 99,
+          },
+          isSingle: {
+            bsonType: "bool",
+          },
+          role: {
+            enum: ["customer", "seller", "admin"],
+          },
+        },
+      },
+    },
+  });
+
+db.users.insertOne({
+  email: 'admin@GMAIL.com',
+  password: 'qSFGDFG@KDJss',
+  role: 'admin',
+  social_accounts: ['Instagram', 'Twitter'] // esto no está validado y se inserta sin más
+})
+
+
+// podemos setear en mongo que no queremos propiedades adicionales
+use("ger_store")
+db.createCollection("users",
+  {
+    validator: {
+      $jsonSchema: {
+        bsonType: "object",
+        required: ["email", "password", "role"],
+        additionalProperties: false, // Evitamos nuevos parámetros
+        properties: {
+          _id: {
+            bsonType: 'objectId'
+          },
+          name: {
+            bsonType: "string",
+          },
+          last_name: {
+            bsonType: "string",
+          },
+          email: {
+            bsonType: "string",
+            pattern: '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$',
+            // Patrón para validar el formato del correo electrónico
+          },
+          password: {
+            bsonType: "string",
+            pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})',
+            // al menos una minúscula, una mayúscula, un número y 8 caracteres
+          },
+          age: {
+            bsonType: "number",
+            minimum: 18,
+            maximum: 99,
+          },
+          isSingle: {
+            bsonType: "bool",
+          },
+          role: {
+            enum: ["customer", "seller", "admin"],
+          },
+        },
+      },
+    },
+  });
+
+use("ger_store");
+try {
+  db.users.insertOne({
+    email: 'admin@gmail.com',
+    password: 'qS4564FGDFG@KDJss',
+    role: 'admin'
+  });
+} catch (e) {
+  printjson(e);
+}
+
+
+// Modificar sin Eliminar y Recrear Esquema (Hay que enviar toda la definición, el validator, de nuevo)
+use("ger_store")
+db.getCollectionInfos() // lista las estructuras de las colecciones
+
+// tenemos que agregar permisos al usuario
+use("ger_store")
+db.runCommand({
+  collMod: 'users',
+  validator: {
+        "$jsonSchema": {
+          "bsonType": "object",
+          "required": [
+            "email",
+            "password",
+            "role"
+          ],
+          "additionalProperties": true, // lo paso a true por ejemplo
+          "properties": {
+            "_id": {
+              "bsonType": "objectId"
+            },
+            "name": {
+              "bsonType": "string"
+            },
+            "last_name": {
+              "bsonType": "string"
+            },
+            "email": {
+              "bsonType": "string",
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+            },
+            "password": {
+              "bsonType": "string",
+              "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})"
+            },
+            "age": {
+              "bsonType": "number",
+              "minimum": 18,
+              "maximum": 99
+            },
+            "isSingle": {
+              "bsonType": "bool"
+            },
+            "role": {
+              "enum": [
+                "customer",
+                "seller",
+                "admin"
+              ]
+            }
+          }
+        }
+      }
+
+})

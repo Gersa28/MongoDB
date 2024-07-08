@@ -1,0 +1,40 @@
+use('ger_store')
+db.products.find()
+
+use('ger_store')
+db.stores.find()
+
+// Producto1: 668b1fdd673270be944d8f7b 
+
+// Store2:    668b225ef20ec9a6856e89ab
+
+use('ger_store')
+db.products.updateOne(
+    {_id: ObjectId('668b1fdd673270be944d8f7b')}, // Producto 
+    {
+        $set: {
+            stores_ids: [ // se agrega esta propiedad
+                        ObjectId('668b225ef20ec9a6856e89ab') // Store
+                        ]
+        }
+    }
+)
+
+
+use('ger_store')
+db.products.find()
+
+// ----------------------------------------------------------------
+use("ger_store");
+// ahora producto también tiene una relación hacia los stores
+db.products.aggregate([ 
+  {
+    $lookup:{
+      from:'stores',
+      localField:'stores_ids',
+      foreignField:'_id',
+      as: 'Resultados de Tiendas'
+    }
+  }
+])
+// ----------------------------------------------------------------

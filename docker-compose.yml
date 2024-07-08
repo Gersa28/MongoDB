@@ -14,7 +14,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=tooR
     volumes:
-      - /mongo_data:/data/db
+      - /mongo_data:/data/db # Esto debería estar en .gitignore para ser ignorado en el repositorio
 
 
 # Tuve problemas al levantar el servicio en Linux, al hacer docker-compose -ps en el resultado el State

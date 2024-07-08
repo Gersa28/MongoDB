@@ -1,0 +1,65 @@
+use("ger_store")
+db.orders.find()
+
+use("ger_store")
+db.products.find()
+
+use("ger_store");
+try {
+  db.orders.insertOne({ // insertar un documento
+      user_id: ObjectId('668b075f68dc636a0dba899a'), // usuario
+      date: '2020-12-15', //fecha
+      total: 0, // vamos a ir insertando dinámicamente
+      items:[]
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_store")
+db.orders.find({_id: ObjectId('668bddc33fca21f91a41b962')})
+
+//668beb9ea0c237ec264e46e1
+use("ger_store")
+db.orders.updateOne(
+    {_id: ObjectId('668beb9ea0c237ec264e46e1')},
+    {
+        $push: {
+                items: {                
+                    name:"Producto 3",
+                    precio: 240,
+                    cantidad: 8,
+                    product_id: ObjectId("668b1fdd673270be944d8f7d") // Agregamos Referencia
+                    },
+        },
+        $inc: {
+            total: 240 * 1
+        }
+
+
+    }
+)
+
+use("ger_store")
+db.orders.find({_id: ObjectId('668beb9ea0c237ec264e46e1')})
+
+//668beb9ea0c237ec264e46e1
+use("ger_store")
+db.orders.updateOne(
+    {_id: ObjectId('668beb9ea0c237ec264e46e1')},
+    {
+        $push: {
+                items: {                
+                    name:"Producto 2",
+                    precio: 50,
+                    cantidad: 7,
+                    product_id: ObjectId("668b1fdd673270be944d8f7c") // Agregamos Referencia
+                    },
+        },
+        $inc: { // incremente el total de acuerdo a la multiplicación
+            total: 50 * 7
+        }
+
+
+    }
+)

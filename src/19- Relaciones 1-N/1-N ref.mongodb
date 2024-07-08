@@ -1,0 +1,100 @@
+use("ger_store")
+db.orders.drop()
+
+use("ger_store")
+db.orders.find()
+
+use("ger_store");
+try {
+  db.orders.insertOne({ // insertar un documento
+      user_id: ObjectId('668b075f68dc636a0dba899a'),
+      date: '2020-12-15',
+      items:  [ // Relación 1-N
+        {
+          name:'Matracas',
+          precio: 120,
+          cantidad: 10
+        },
+        {
+          name:'Zapatos',
+          precio: 200,
+          cantidad: 3
+        },
+      ],
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_store")
+db.orders.find({'user_id':ObjectId('668b075f68dc636a0dba899b')})
+
+use("ger_store")
+db.users.find()
+
+use("ger_store")
+db.orders.find()
+
+//Cantidad de órdenes del usuario
+use("ger_store")
+db.orders.find({'user_id':ObjectId('668b075f68dc636a0dba899a')}).count()
+
+// Información en conjunto
+use("ger_store")
+db.orders.aggregate([
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'user_id',
+      foreignField: '_id',
+      as: 'user'
+    }
+  }
+])
+
+// Consulta para una orden específica
+use("ger_store")
+db.orders.aggregate([
+  {
+    $match: {
+        "_id": ObjectId("668b145323c4b8f6161aa787") // id de una Orden
+    }
+  },
+  {
+    $lookup: {
+      from: 'users',
+      localField: 'user_id',
+      foreignField: '_id',
+      as: 'user'
+    }
+  }
+])
+
+
+// Consulta sobre usuario específico
+use('ger_store')
+db.users.aggregate([
+    {
+        $match: {
+            "_id": ObjectId("668b075f68dc636a0dba899a")
+        }
+    },
+    {
+        $lookup: {
+            from: "orders",
+            localField: "_id",
+            foreignField: "user_id",
+            as: "orders"
+        }
+    },
+    {
+        $project: {
+            "_id": 0,
+            "name": 1,
+            "orders.date": 1,
+            "orders.orderId": 1,
+            "orders.items.quantity": 1,
+            "orders.items.price": 1
+        }
+    },
+])

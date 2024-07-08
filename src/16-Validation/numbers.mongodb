@@ -1,0 +1,33 @@
+// ----------------------------------
+use("ger_store")
+db.users.drop() // borro la colección si está creada
+
+// definimos un esquema
+use("ger_store")
+db.createCollection('users', {
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            required: ['email', 'password', 'role'], // campos obligatorios para el insert
+            properties: {
+                name:      {bsonType: 'string'},
+                last_name: {bsonType: 'string'},
+                email:     {bsonType: 'string', pattern: "^[A-Za-z\d.-]{1,}@[A-Za-z\d.-]{1,}[.]{1}[A-Za-z\d.-]{1,}$"},
+                password:  {bsonType: 'string', pattern: "^.{4,40}$"}, // de 4 a 40 caracteres
+                age:       {bsonType: 'number', minimum: 18, maximum: 99},
+                isSingle:  {bsonType: 'bool'},
+                role:      {enum: ['customer','seller','admin']},
+            }
+        }
+    }
+})
+// ----------------------------------
+
+// ----------------------------------
+use("ger_store")
+db.users.insertOne({
+    last_name: 'Molina',
+    email: "jprge@gmail.com", 
+    password: "--3434---",
+    role: "seller" // formato 
+})

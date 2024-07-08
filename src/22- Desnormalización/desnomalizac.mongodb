@@ -1,0 +1,32 @@
+use("ger_store")
+db.orders.find()
+
+use("ger_store")
+db.products.find()
+
+use("ger_store");
+try {
+  db.orders.insertOne({ // insertar un documento
+      user_id: ObjectId('668b075f68dc636a0dba899a'),
+      date: '2020-12-15',
+      items:[ // Relación 1-N
+                {
+                name:"Producto 3",
+                precio: 240,
+                cantidad: 8,
+                product_id: ObjectId("668b1fdd673270be944d8f7d") // Agregamos Referencia
+                },
+                {
+                name:'Producto 2',
+                precio: 50,
+                cantidad: 7,
+                product_id: ObjectId('668b1fdd673270be944d8f7c') // Agregamos Referencia
+                },
+        ],
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_store")
+db.orders.find({_id: ObjectId('668bddc33fca21f91a41b962')})

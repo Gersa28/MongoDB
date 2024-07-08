@@ -1,0 +1,53 @@
+use("ger_store")
+db.orders.drop()
+
+use("ger_store")
+db.orders.find()
+
+use("ger_store");
+try {
+  db.orders.insertOne({ // insertar un documento
+      user_id: ObjectId('668b075f68dc636a0dba899a'),
+      date: '2020-12-15',
+      items:  [ // Relación 1-N
+        {
+          name:'Camiseta',
+          precio: 120,
+          cantidad: 1
+        },
+        {
+          name:'Pantalon',
+          precio: 200,
+          cantidad: 1
+        },
+      ],
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_store");
+try { // Nueva orden de compra
+  db.orders.insertOne({ // insertar un documento
+      user_id: ObjectId('668b075f68dc636a0dba899a'),
+      date: '2020-12-15',
+      items:  [ // Relación 1-N
+        {
+          name:'Juguete',
+          precio: 10,
+          cantidad: 3
+        }
+      ]
+  });
+} catch (e) {
+  printjson(e);
+}
+
+use("ger_store")
+db.orders.find()
+
+use("ger_store")
+db.orders.find({'items.cantidad':3})
+
+use("ger_store")
+db.orders.find({'user_id':ObjectId('668b075f68dc636a0dba899a')})
