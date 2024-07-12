@@ -1,3 +1,9 @@
+# Colocarnos en el Directorio
+cd /mnt/c/Users/INGENIERO\ SALINA/OneDrive/0_TRABAJO\ NUEVO/00_CURSOS\ Y\ MATERIAS/16_\ MONGODB/mongo-intro
+
+cd /mnt/c/Users/Ingenieria/OneDrive/0_TRABAJO\ NUEVO/00_CURSOS\ Y\ MATERIAS/16_\ MONGODB/mongo-intro
+
+
 // En el Shell de Linux correctamente ubicado
 
 # Levantar el Servicio
@@ -26,8 +32,5 @@ docker start <nombre_del_contenedor>
 
 docker run -d --name <nombre_del_contenedor> <nombre_de_la_imagen>
 
-# Colocarnos en el Directorio
 
-cd "/mnt/c/Users/INGENIERO SALINA/OneDrive/0_TRABAJO NUEVO/00_CURSOS Y MATERIAS/16 MONGODB/mongo-intro"
 
-cd /mnt/c/Users/Ingenieria/OneDrive/0_TRABAJO\ NUEVO/00_CURSOS\ Y\ MATERIAS/16\ MONGODB/mongo-intro

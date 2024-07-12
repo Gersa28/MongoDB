@@ -1,0 +1,66 @@
+// buscar la propiedad más barata y la más cara de cada tipo de propiedad en Estados Unidos
+// agrupar solo es posible con aggregation framework
+use("sample_airbnb")
+
+db.listingsAndReviews.aggregate(
+    [
+        // Filtrar propiedades en Estados Unidos
+        { $match: { "address.country_code": "US" } },
+        
+        // Proyectar los campos necesarios
+        { $project: { 
+                    "name": 1, 
+                    "price": 1, 
+                    "address.country_code": 1, 
+                    "property_type": 1 
+                    } 
+        },
+        
+        // Ordenar por tipo de propiedad y luego por precio
+        { $sort: { "property_type": 1, "price": 1 } },  
+        
+        { 
+          $group: // Agrupar por tipo de propiedad
+            { 
+                _id: "$property_type", // Aparece el tipo de propiedad en el campo _id
+                // Encontrar la propiedad más barata
+                "masBajo": { 
+                            $first: { 
+                            "nombre": "$name",
+                            "tipo": "$property_type", 
+                            "precio": "$price"
+                                            }
+                                    },
+                // Encontrar la propiedad más cara
+                "masAlto": { 
+                            $last: { 
+                            "nombre": "$name",
+                            "tipo": "$property_type", 
+                            "precio": "$price"
+                                        }
+                                        }
+            }
+        }
+    ]
+)
+
+
+// Calcula el número promedio del precio por noche de los alojamientos completos ("Entire home/apt") Barcelona.
+// Utiliza el Aggregation Framework para lograr esto.
+use('sample_airbnb')
+db.listingsAndReviews.aggregate([
+    {
+        $match: {
+            'address.market': 'Barcelona',
+            room_type: 'Entire home/apt'
+        }
+    },
+    {
+        $group: {
+            _id: null,
+            avgPrice: {
+                $avg: '$price'
+            }
+        }
+    }
+])

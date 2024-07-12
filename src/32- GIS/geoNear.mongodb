@@ -1,0 +1,65 @@
+// $geoNear se utiliza para encontrar documentos cerca de un punto 
+// geográfico especificado
+// filtra todos los documentos que estén a una distancia máxima de 
+// 3000 metros del punto geográfico especificado, en este caso central park
+// 1ro Latitud 2do Longitud
+use("sample_airbnb")
+db.listingsAndReviews.aggregate([
+    {
+      $geoNear: {
+        near:{
+                type: "Point",
+                coordinates: [-73.95552676483872, 40.7994839486901]
+            },
+        distanceField: "distancia",
+        maxDistance: 3000,
+        spherical: true // también pueden ser planares
+        }
+    }
+])
+
+
+// que tanto varia el precio dependendiendo de la distancia de un punto geografico especifico
+// es decir vamos a calcular el promedio de los precios segun cuan cerca (menos de 2km) o lejos este del punto geografico especificado
+
+use("sample_airbnb")
+db.listingsAndReviews.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: "Point",
+          coordinates: [
+            -73.95552676483872,
+            40.7994839486901
+          ]
+        },
+        distanceField: "distancia",
+        maxDistance: 30000,
+        spherical: true
+        }
+    },
+    {   // el valor de camas no puede ser cero
+        $match: { beds: {$ne: 0} } //dependiendo la cantidad de camas, el precio variara
+    },
+    {
+        $project: {
+          distancia: 1,
+          precioXcama: { $divide: ["$price", "$beds"] } // Precio/Camas
+        }
+    },
+    {
+        $group: {
+          _id: { // usamos un condicional para nuestro id
+                $cond:{
+                    if: { $lte: ["$distancia", 2000] }, // 2 kilometros
+                    then: "Cerca",
+                    else: "Lejos"
+                }
+          },
+          precioPromedio: { $avg: "$precioXcama" }
+        }
+    },
+    {
+        $sort: { _id: 1 }
+    }
+])

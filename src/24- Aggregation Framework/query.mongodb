@@ -4,14 +4,14 @@ db.sales.aggregate([
     {
         $match: {"storeLocation":"London"}
     },
-    //Agrupar 
+    //Agrupar por método de compra
     {
         $group: {
             _id: "$purchaseMethod",
-            avgAge: {$avg: "$customer.age"}
+            avgAge: {$avg: "$customer.age"} // operación
         }
     },
-    //Modelar resultado (Que campos y como se van a mostrar)
+    //Modelar resultado (Qué campos y cómo se van a mostrar)
     {
         $project: {
             _id:0,
@@ -26,3 +26,58 @@ db.sales.aggregate([
         }
     }
 ])
+
+/*
+    $match: es un operador que filtra los documentos de entrada para permitir que
+    solo pasen los documentos que coinciden con la condición especificada.
+    (En nuestro caso, filtramos por la ubicación de la tienda en Londres.)
+
+    $group: es un operador que agrupa los documentos de entrada por un campo específico,
+    en nuestro caso, el método de compra. También calcula la edad promedio de los clientes
+
+    $project: es un operador que cambia la forma de los documentos de entrada.
+    En nuestro caso, cambiamos el nombre de los campos y redondeamos la edad promedio.
+
+    $sort: es un operador que ordena los documentos de entrada según el campo especificado.
+    En nuestro caso, ordenamos por edad promedio.
+*/
+
+// Método: Query de Mongo
+use('sample_airbnb')
+db.listingsAndReviews.find(
+{
+last_review:
+{
+$gte: new Date('2019-01-01'),
+$lte: new Date('2020-01-01')
+}
+}).count()
+
+//Resultado: 2263
+
+// Método: Agreggation. Hay que describir cada etapa
+use('sample_airbnb')
+db.getCollection("listingsAndReviews").aggregate([
+  {
+    $match:
+    {
+      last_review:
+      {
+        $gte: new Date('2019-01-01'),
+        $lte: new Date('2020-01-01')
+      }
+    }
+  },
+  {
+    $group:
+    {
+      _id: null,
+      Total: { $sum: 1 }
+    }
+  },
+  {
+    $project: { _id: 0 }
+  }
+]);
+
+//Resultado: [ { Total: 2263 } ]

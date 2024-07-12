@@ -31,7 +31,7 @@ services:
         target: /data/transactions.json
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: tooR
+      MONGO_INITDB_ROOT_PASSWORD: test
     command: --config /etc/mongod.conf
 
 volumes:

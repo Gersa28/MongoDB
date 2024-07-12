@@ -1,0 +1,22 @@
+
+# Use root/example as user/password credentials
+# https://hub.docker.com/_/mongo
+
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:5.0
+    container_name: mongo_contenedor
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=tooR
+    volumes:
+      - /mongo_data:/data/db # Esto debería estar en .gitignore para ser ignorado en el repositorio
+
+
+# Tuve problemas al levantar el servicio en Linux, al hacer docker-compose -ps en el resultado el State
+# me salia Exit 1 se caia despues de crearlo, le quite el punto en el path en volumes: - ./mongo_data:/data/db y se resolvió en problema.
+

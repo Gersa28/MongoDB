@@ -1,0 +1,26 @@
+// $redact sirve para controlar el acceso a los documentos de una colección, es decir, para filtrar los documentos que se devuelven a los usuarios.
+
+// en este ejercicio vamos a omitir todas las calificaciones de airbnb que esten por debajo de 90
+
+//Desventajas en el uso de $redact:
+/*
+es más costoso que el operador $match
+Solo excluye a partir de la etapa de la función
+aggregate donde se utilice $redact.
+*/
+use('sample_airbnb')
+db.listingsAndReviews.aggregate([
+    {
+        $redact: {
+            $cond: { // condicional
+                // si la calificacion es mayor o igual a 90
+                if: { $gte: ['$review_scores.review_scores_rating', 90] },
+                  then: '$$DESCEND', // entonces devolvemos el documento
+                else: '$$PRUNE' // si no, omitimos el documento
+            }
+        }
+    },
+  /*  {
+        $count: 'cantidad' // con calificación superior a 90
+    }*/
+])

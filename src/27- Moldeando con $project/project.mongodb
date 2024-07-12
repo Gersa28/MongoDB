@@ -1,0 +1,57 @@
+use("sample_airbnb")
+
+db.listingsAndReviews.aggregate([
+    {
+        $match: {
+          "address.country_code": "US"
+        }
+    },
+    {
+        $sort: {
+            property_type: 1,
+            price: 1,
+        },
+    },
+    {
+        $group: {
+            _id: "$property_type",
+            masBarato: {
+                $first: { 
+                    nombre: "$name",
+                    price: "$price",
+                    direccion: "$address"
+                }
+
+            },
+            masCaro: {
+                $last: {
+                    nombre: "$name",
+                    price: "$price",
+                    direccion: "$address"
+                }
+                
+            }
+        }
+    }, {
+        $project: {
+          "_id":0, // que no muestre el id
+          "Tipo de propiedad": "$_id", // llave de la agrupación
+          "Menor precio": {
+            $convert: {
+                input: "$masBarato.price",
+                to: "double",
+                onError: 0.0,
+                onNull: 0.0
+            }
+          },
+          "Mayor precio": {
+            $convert: {
+                input: "$masCaro.price",
+                to: "double",
+                onError: 0.0,
+                onNull: 0.0
+            }
+          }
+        }
+    }
+])
